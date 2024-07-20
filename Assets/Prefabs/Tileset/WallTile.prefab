@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1495204749023502167}
   - component: {fileID: 2656969798466550884}
+  - component: {fileID: 1200147906324513116}
   m_Layer: 7
   m_Name: WallTile
   m_TagString: Untagged
@@ -45,6 +46,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 113f77589cc2fb449987d2b2bea18995, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  meshRenderer: {fileID: 8427668340066803317}
+  normalMaterial: {fileID: 2100000, guid: 0d386ba37afb2834d99fbd1339089585, type: 2}
+  selectedMaterial: {fileID: 2100000, guid: b7f9efd44d3430a4ba83ac976ad21676, type: 2}
+--- !u!65 &1200147906324513116
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7348803517174962647}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 2}
+  m_Center: {x: 0, y: 0, z: 1}
 --- !u!1001 &7148481538686862065
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -126,6 +151,12 @@ PrefabInstance:
 --- !u!4 &7259304970223297818 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f11ae8185f125d046be3fc038a3262bc,
+    type: 3}
+  m_PrefabInstance: {fileID: 7148481538686862065}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &8427668340066803317 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: f11ae8185f125d046be3fc038a3262bc,
     type: 3}
   m_PrefabInstance: {fileID: 7148481538686862065}
   m_PrefabAsset: {fileID: 0}
