@@ -8,14 +8,13 @@ using UnityEngine.Rendering.Universal;
 
 namespace CureAllGame
 {
-
-    public class DwarfgameRenderPass : ScriptableRenderPass
+    public class PixelizeRenderPass : ScriptableRenderPass
 	{
         private Material m_Material;
         private RTHandle m_TextureHandle;
         private RenderTextureDescriptor m_TextureDescriptor;
 
-        public DwarfgameRenderPass(Material renderMaterial)
+        public PixelizeRenderPass(Material renderMaterial)
         {
             m_Material = renderMaterial;
             m_TextureDescriptor = new(Screen.width, Screen.height, RenderTextureFormat.Default, 0);

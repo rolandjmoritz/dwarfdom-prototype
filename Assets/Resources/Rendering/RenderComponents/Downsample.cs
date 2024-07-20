@@ -8,8 +8,8 @@ using UnityEngine.Rendering.Universal;
 namespace CureAllGame
 {
     [Serializable]
-    [VolumeComponentMenuForRenderPipeline("Cure-All/Pixelize", typeof(UniversalRenderPipeline))]
-    public class PixelizeEffectComponent : VolumeComponent, IPostProcessComponent
+    [VolumeComponentMenuForRenderPipeline("Cure-All/Downsample", typeof(UniversalRenderPipeline))]
+    public class Downsample : VolumeComponent, IPostProcessComponent
     {
         // Shader variables go here.
         [Header("Pixelization Settings")]
