@@ -7,7 +7,7 @@ public class Dwarf : MonoBehaviour, IEventListener
 {
     public float wanderRange = 10f;
     private NavMeshAgent agent;
-
+    public float miningSpeed = 20.0f;
 
     public enum AnimationTriggerType
     {

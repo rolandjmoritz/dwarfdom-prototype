@@ -35,8 +35,13 @@ public class MineState : DwarfState
 
         if (dwarf.TileToMine == null || dwarf.TileToMine.Selected == false)
         {
-            dwarf.StateMachine.ChangeState(dwarf.IdleState);
+            dwarf.StateMachine.ChangeState(dwarf.MoveState);
             Debug.Log(dwarf.gameObject.name + " stopping to mine.");
+        }
+        if (dwarf.Agent.remainingDistance <= dwarf.Agent.stoppingDistance)
+        {
+            Debug.Log(dwarf.gameObject.name + " reached goal");
+            dwarf.TileToMine.TakeDamage(dwarf.miningSpeed * Time.deltaTime);
         }
     }
 }
