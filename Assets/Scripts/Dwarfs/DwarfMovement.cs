@@ -4,6 +4,7 @@ using UnityEngine.AI;
 public class DwarfMovement : MonoBehaviour
 {
     public float wanderRange = 10f;
+    public Animator animator;
     private NavMeshAgent agent;
 
     void Start()
@@ -25,6 +26,9 @@ public class DwarfMovement : MonoBehaviour
         {
             SetNewRandomDestination();
         }
+        float speed = agent.velocity.magnitude;
+        animator.SetFloat("Speed", speed);
+        Debug.Log("Dwarf Speed: " + agent.velocity.magnitude);
     }
 
     void SetNewRandomDestination()
