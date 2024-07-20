@@ -40,5 +40,9 @@ public class MoveState : DwarfState
         {
             stateMachine.ChangeState(dwarf.IdleState);
         }
+        if (dwarf.TileToMine != null && dwarf.TileToMine.Selected)
+        {
+            stateMachine.ChangeState(dwarf.MineState);
+        }
     }
 }

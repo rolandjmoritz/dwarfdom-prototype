@@ -37,5 +37,14 @@ public class IdleState : DwarfState
         {
             stateMachine.ChangeState(dwarf.MoveState);
         }
+        if (dwarf.TileToMine != null && dwarf.TileToMine.Selected)
+        {
+            stateMachine.ChangeState(dwarf.MineState);
+        }
+    }
+
+    public override void OnEventTriggered(string eventType, object data)
+    {
+        base.OnEventTriggered(eventType, data);
     }
 }

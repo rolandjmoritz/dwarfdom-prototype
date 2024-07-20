@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Dwarf : MonoBehaviour
+public class Dwarf : MonoBehaviour, IEventListener
 {
     public float wanderRange = 10f;
     private NavMeshAgent agent;
+
 
     public enum AnimationTriggerType
     {
@@ -20,7 +21,39 @@ public class Dwarf : MonoBehaviour
     public IdleState IdleState { get; set; }
     public MoveState MoveState { get; set; }
     public MineState MineState { get; set; }
+    public WallTile TileToMine { get; set; }
     public NavMeshAgent Agent { get => agent; set => agent = value; }
+
+    private void OnEnable()
+    {
+        EventManager.Instance.AddListener(this);
+    }
+
+    private void OnDisable()
+    {
+        EventManager.Instance.RemoveListener(this);
+    }
+
+    public void OnEventTriggered(string eventType, object data)
+    {             
+        // If we learn about a new tile being selected, we check if another dwarf is already mining it and if not, we'll claim it as the one we are working on
+        switch (eventType)
+        {
+            case "TileSelected":
+                WallTile tile = data as WallTile;
+                if (tile.minedByDwarf == null)
+                {
+                    TileToMine = tile;
+                    tile.minedByDwarf = this;
+                }
+                break;
+            default:
+                break;
+        }
+
+        StateMachine.CurrentDwarfState.OnEventTriggered(eventType, data);
+    }
+    
 
     private void AnimationTriggerEvent(AnimationTriggerType triggerType)
     {

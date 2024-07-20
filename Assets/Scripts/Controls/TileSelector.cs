@@ -23,7 +23,7 @@ public class TileSelector : MonoBehaviour
     void Update()
     {
         // Check for mouse click
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             DetectMeshClick();
         }

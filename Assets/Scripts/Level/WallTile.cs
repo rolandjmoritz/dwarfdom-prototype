@@ -8,6 +8,10 @@ public class WallTile : MonoBehaviour
     public Material normalMaterial;
     public Material selectedMaterial;
 
+    public float health = 100.0f;
+
+    public Dwarf minedByDwarf = null;
+
     public enum tileType
     {
         rock, 
@@ -16,6 +20,15 @@ public class WallTile : MonoBehaviour
     };
 
     private bool selected = false;
+
+    public void TakeDamage(float amount = 1.0f)
+    {
+        health -= amount;
+        if (health < amount)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     public bool Selected {
         get
@@ -28,6 +41,7 @@ public class WallTile : MonoBehaviour
             if (selected)
             {
                 meshRenderer.material = selectedMaterial;
+                EventManager.Instance.TriggerEvent("TileSelected", this);
             }
             else
             {
