@@ -6,6 +6,7 @@ using UnityEngine;
 public class TileSelector : MonoBehaviour
 {
     public NavMeshSurface surface;
+    private WallTile lastTileSelected;
 
     private void Start()
     {
@@ -23,7 +24,7 @@ public class TileSelector : MonoBehaviour
     void Update()
     {
         // Check for mouse click
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
             DetectMeshClick();
         }

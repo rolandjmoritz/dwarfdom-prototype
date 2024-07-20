@@ -41,7 +41,7 @@ public class Dwarf : MonoBehaviour, IEventListener
         {
             case "TileSelected":
                 WallTile tile = data as WallTile;
-                if (tile.minedByDwarf == null)
+                if (tile.minedByDwarf == null && TileToMine == null)
                 {
                     TileToMine = tile;
                     tile.minedByDwarf = this;
