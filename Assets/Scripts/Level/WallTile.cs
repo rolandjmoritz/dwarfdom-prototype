@@ -26,6 +26,7 @@ public class WallTile : MonoBehaviour
         health -= amount;
         if (health < amount)
         {
+            EventManager.Instance.TriggerEvent("TileDestroyed", this);
             Destroy(gameObject);
         }
     }
@@ -40,12 +41,11 @@ public class WallTile : MonoBehaviour
             selected = value;
             if (selected)
             {
-                meshRenderer.material = selectedMaterial;
                 EventManager.Instance.TriggerEvent("TileSelected", this);
             }
             else
             {
-                meshRenderer.material = normalMaterial;
+                EventManager.Instance.TriggerEvent("TileDeSelected", this);
             }
         }
     }

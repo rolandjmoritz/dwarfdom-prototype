@@ -18,6 +18,7 @@ public class MoveState : DwarfState
     public override void OnEnterState()
     {
         base.OnEnterState();
+        dwarf.animator.SetTrigger("walk");
         dwarf.Agent.isStopped = false;
         
         Vector3 randomDirection = Random.insideUnitSphere * wanderRange;
@@ -40,6 +41,7 @@ public class MoveState : DwarfState
         {
             stateMachine.ChangeState(dwarf.IdleState);
         }
+        dwarf.CheckForTilesToMine();
         if (dwarf.TileToMine != null && dwarf.TileToMine.Selected)
         {
             stateMachine.ChangeState(dwarf.MineState);

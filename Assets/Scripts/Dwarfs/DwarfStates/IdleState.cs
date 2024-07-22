@@ -20,6 +20,7 @@ public class IdleState : DwarfState
     public override void OnEnterState()
     {
         base.OnEnterState();
+        dwarf.animator.SetTrigger("idle");
         dwarf.Agent.isStopped = true;
         idleCounter = Random.Range(idleDurationMin, idleDurationMax);
     }
@@ -37,6 +38,7 @@ public class IdleState : DwarfState
         {
             stateMachine.ChangeState(dwarf.MoveState);
         }
+        dwarf.CheckForTilesToMine();
         if (dwarf.TileToMine != null && dwarf.TileToMine.Selected)
         {
             stateMachine.ChangeState(dwarf.MineState);

@@ -24,36 +24,19 @@ public class Dwarf : MonoBehaviour, IEventListener
     public WallTile TileToMine { get; set; }
     public NavMeshAgent Agent { get => agent; set => agent = value; }
 
-    private void OnEnable()
-    {
-        EventManager.Instance.AddListener(this);
-    }
-
-    private void OnDisable()
-    {
-        EventManager.Instance.RemoveListener(this);
-    }
 
     public void OnEventTriggered(string eventType, object data)
     {             
-        // If we learn about a new tile being selected, we check if another dwarf is already mining it and if not, we'll claim it as the one we are working on
-        switch (eventType)
+        if (eventType == "TileDeSelected")
         {
-            case "TileSelected":
-                WallTile tile = data as WallTile;
-                if (tile.minedByDwarf == null && TileToMine == null)
-                {
-                    TileToMine = tile;
-                    tile.minedByDwarf = this;
-                }
-                break;
-            default:
-                break;
+            WallTile wt = data as WallTile;
+            if (wt == TileToMine)
+            {
+                TileToMine = null;
+            }
         }
-
         StateMachine.CurrentDwarfState.OnEventTriggered(eventType, data);
-    }
-    
+    }    
 
     private void AnimationTriggerEvent(AnimationTriggerType triggerType)
     {
@@ -75,19 +58,56 @@ public class Dwarf : MonoBehaviour, IEventListener
     private void Start()
     {
         StateMachine.Initialize(IdleState);
+        EventManager.Instance.AddListener(this);
     }
 
     // Update is called once per frame
     void Update()
     {
         StateMachine.CurrentDwarfState.OnFrameUpdate();
-
         UpdateAnimator();
+    }
+
+    // returns true if the Dwarf has found a new tile to mine
+    public bool CheckForTilesToMine()
+    {
+        if (TileSelector.selectedWallTiles.Count > 0)
+        {
+            float minDist = 100000.0f;
+            float currentDist = 0.0f;
+            int tileIdx = -1;
+            // try to find nearest free selected tile
+            for (int i = 0; i < TileSelector.selectedWallTiles.Count; i++)
+            {
+                currentDist = Vector3.Distance(transform.position, TileSelector.selectedWallTiles[i].transform.position);
+                if (currentDist < minDist && (TileSelector.selectedWallTiles[i].minedByDwarf == null))
+                {
+                    minDist = currentDist;
+                    tileIdx = i;
+                }
+            }
+            // if we found a free selected tile, return true and assign tile to dwarf and dwarf to tile
+            if (tileIdx >= 0)
+            {
+                TileToMine = TileSelector.selectedWallTiles[tileIdx];
+                TileSelector.selectedWallTiles[tileIdx].minedByDwarf = this;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void UpdateAnimator()
     {
         float speed = agent.velocity.magnitude;
         animator.SetFloat("Speed", speed);
+    }
+
+    public void ResetAllTriggers()
+    {
+        animator.ResetTrigger("mine");
+        animator.ResetTrigger("walk");
+        animator.ResetTrigger("idle");
     }
 }

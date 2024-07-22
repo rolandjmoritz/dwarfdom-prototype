@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
 
-public class TileSelector : MonoBehaviour
+public class TileSelector : MonoBehaviour, IEventListener
 {
+    public static List<WallTile> selectedWallTiles = new List<WallTile>();
     public NavMeshSurface surface;
-    private WallTile lastTileSelected;
 
     private void Start()
     {
+        EventManager.Instance.AddListener(this);
         if (surface == null)
         {
             surface = FindObjectOfType<NavMeshSurface>();
@@ -27,6 +28,15 @@ public class TileSelector : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             DetectMeshClick();
+        }
+    }
+
+    public void OnEventTriggered(string eventType, object data)
+    {
+        if (eventType == "TileDestroyed")
+        {
+            WallTile wt = data as WallTile;
+            DeselectWallTile(wt);
         }
     }
 
@@ -58,7 +68,32 @@ public class TileSelector : MonoBehaviour
         WallTile tile = selectedObject.GetComponent<WallTile>();
         if (tile != null)
         {
-            tile.Selected = !tile.Selected;
+            if (selectedWallTiles.Contains(tile))
+            {
+                DeselectWallTile(tile);
+            }
+            else
+            {
+                SelectWallTile(tile);
+            }
         }
+    }
+
+    public static void SelectWallTile(WallTile wallTile)
+    {
+        // Add to the list of selected WallTiles
+        selectedWallTiles.Add(wallTile);
+        wallTile.Selected = true;
+        // Optionally, change the appearance to indicate selection
+        wallTile.meshRenderer.material.color = Color.yellow; // Example: change color
+    }
+
+    public static void DeselectWallTile(WallTile wallTile)
+    {
+        // Remove from the list of selected WallTiles
+        selectedWallTiles.Remove(wallTile);
+        wallTile.Selected = false;
+        // Optionally, revert the appearance to indicate deselection
+        wallTile.meshRenderer.material.color = Color.white; // Example: change color
     }
 }
