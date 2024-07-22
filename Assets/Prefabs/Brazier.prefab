@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5475405105405866292}
   - component: {fileID: 8266699583486709266}
   - component: {fileID: 4977615946473969875}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BrazierLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,7 +129,7 @@ GameObject:
   - component: {fileID: 742242518161179999}
   - component: {fileID: 5517203173405962036}
   - component: {fileID: 7343486868055520569}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BrazierLight (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -247,7 +247,7 @@ GameObject:
   - component: {fileID: 9178921607676910979}
   - component: {fileID: 1140047758067869879}
   - component: {fileID: 2428842530636954521}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BrazierLight (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -363,7 +363,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1467764016988472297}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Brazier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -403,7 +403,7 @@ GameObject:
   - component: {fileID: 1707843506128663864}
   - component: {fileID: 3045215940263783315}
   - component: {fileID: 7146169718175648343}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Particle System 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5233,7 +5233,7 @@ GameObject:
   - component: {fileID: 2997021371573590574}
   - component: {fileID: 3051838945146076920}
   - component: {fileID: 8707837067096158770}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10063,7 +10063,7 @@ GameObject:
   - component: {fileID: 7878150562508990620}
   - component: {fileID: 4919288181256176747}
   - component: {fileID: 4905476524525056126}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BrazierLight (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10247,6 +10247,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Brazier
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c5e2db855a0999b448221fd8f6d8bc42,
+        type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

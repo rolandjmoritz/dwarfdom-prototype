@@ -50,6 +50,7 @@ public class MineState : DwarfState
             {
                 dwarf.ResetAllTriggers();
                 dwarf.animator.SetTrigger("mine");
+                dwarf.transform.LookAt(dwarf.TileToMine.transform, Vector3.up);
             }
             currentlyMining = true;
             dwarf.TileToMine.TakeDamage(dwarf.miningSpeed * Time.deltaTime);
@@ -66,6 +67,7 @@ public class MineState : DwarfState
             {
                 dwarf.TileToMine = null;                
             }
+            dwarf.CheckForTilesToMine();
         }
     }
 }
