@@ -40,7 +40,15 @@ public class MineState : DwarfState
         // Nothing to mine? Then return to walking around
         if (dwarf.TileToMine == null || dwarf.TileToMine.Selected == false)
         {
-            dwarf.StateMachine.ChangeState(dwarf.MoveState);
+            if (dwarf.CheckForTilesToMine())
+            {
+                dwarf.ResetAllTriggers();
+                dwarf.animator.SetTrigger("walk");
+            }
+            else
+            { 
+                dwarf.StateMachine.ChangeState(dwarf.MoveState);
+            }
             currentlyMining = false;
         }
         // else, keep on mining!
