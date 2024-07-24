@@ -1,5 +1,37 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7984857005772032724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e83d15f12569984a9cfa0fa1ffec5e1, type: 3}
+  m_Name: ColorBlitRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  m_Shader: {fileID: 4800000, guid: e5d5830f6ac65fe45a9c1970af64d924, type: 3}
+  m_Intensity: 1.42
+--- !u!114 &-7979585759102318212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc6147e6e18a93442803171b46315541, type: 3}
+  m_Name: Pixelization
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 576
+  m_RenderLayerMask: 0
 --- !u!114 &-1878332245247344467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -53,8 +85,8 @@ MonoBehaviour:
     hdrDebugViewPS: {fileID: 4800000, guid: 573620ae32aec764abd4d728906d2587, type: 3}
   m_RendererFeatures:
   - {fileID: -1878332245247344467}
-  - {fileID: 7113722625265592870}
-  m_RendererFeatureMap: adc0de57c6d2eee5266a9d9d0905b962
+  - {fileID: -7979585759102318212}
+  m_RendererFeatureMap: adc0de57c6d2eee57cc9f09d07d14291
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -97,7 +129,7 @@ MonoBehaviour:
   m_CopyDepthMode: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 1
---- !u!114 &7113722625265592870
+--- !u!114 &8289310411050302773
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -107,9 +139,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fc6147e6e18a93442803171b46315541, type: 3}
-  m_Name: Pixelization
+  m_Name: DwarfGameRendererFeature
   m_EditorClassIdentifier: 
   m_Active: 1
-  m_DownsampleShader: {fileID: 0}
-  m_DitheringShader: {fileID: 0}
-  m_QuantizingShader: {fileID: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  m_RenderLayerMask: 0

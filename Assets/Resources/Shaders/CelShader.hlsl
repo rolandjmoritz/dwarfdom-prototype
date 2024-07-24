@@ -1,6 +1,7 @@
 #ifndef CELSHADER
 	#define CELSHADER
 
+	#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/GlobalSamplers.hlsl"
 	#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 	#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
     #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -8,55 +9,51 @@
 
     struct Attributes // world position
     {
-        float4 position : POSITION;
-		float4 tangent : TANGENT;
-		float3 normal : NORMAL;
-        float2 uv : TEXCOORD0;
+        real4 position : POSITION;
+		real4 tangent : TANGENT;
+		real3 normal : NORMAL;
+        real2 uv : TEXCOORD0;
     };
 
     struct VertexOutput // local position
     {
-        float4 position : POSITION0;
-		float4 shadowCoord : TEXCOORD2;
-		float3 normal : NORMAL;
-		float3 positionWS : POSITIONT;
-		float3 viewDirection : TEXCOORD1;
-        float2 uv : TEXCOORD0;
+        real4 position : POSITION0;
+		real4 shadowCoord : TEXCOORD2;
+		real3 normal : NORMAL;
+		real3 positionWS : POSITIONT;
+		real3 viewDirection : TEXCOORD1;
+        real2 uv : TEXCOORD0;
     };
 
 	// macro defined in Core.hlsl references
 	TEXTURE2D(_MainTex);
 	TEXTURE2D(_NormalTexture);
 	TEXTURE2D(_AOTexture);
-	SAMPLER(sampler_MainTex);
-	SAMPLER(sampler_NormalTexture);
-	SAMPLER(sampler_AOTexture);
 
     CBUFFER_START(UnityPerMaterial)
-		float4 _MainTex_ST;
+		real4 _MainTex_ST;
 
-		float4 _Color;
-		float4 _AmbientColor;
-		float4 _SpecularColor;
-		float4 _RimColor;
+		real4 _Color;
+		real4 _AmbientColor;
+		real4 _SpecularColor;
+		real4 _RimColor;
 
-		float _EnergyConservation;
-		float _Smoothness;
-		float _ShadingStrength;
-		float _RimStrength;
-		float _RimThreshold;
-		float _BlendStrengthAmb;
-		float _BlendStrengthSpec;
-		float _BlendStrengthRim;
+		real _EnergyConservation;
+		real _Smoothness;
+		real _ShadingStrength;
+		real _RimStrength;
+		real _RimThreshold;
+		real _BlendStrengthAmb;
+		real _BlendStrengthSpec;
+		real _BlendStrengthRim;
 
-		float _AOMapLevels;
-		float _AOBrightPreference;
-		float _AOIntensityMin;
-		float _AOIntensityMax;
-
+		real _AOMapLevels;
+		real _AOBrightPreference;
+		real _AOIntensityMin;
+		real _AOIntensityMax;
 	CBUFFER_END
 
-	float MapNum(float currNum, float oldMin, float oldMax, float newMin, float newMax)
+	real MapNum(real currNum, real oldMin, real oldMax, real newMin, real newMax)
 	{
 		return (currNum - oldMin) / (oldMax - oldMin) * (newMax - newMin) + newMin;
 	}
@@ -85,59 +82,59 @@
         return vertInfo;
     }
 
-    float4 FragmentProgram(VertexOutput vertInfo) : SV_Target
+    real4 FragmentProgram(VertexOutput vertInfo) : SV_Target
     {
-		float3 sampleNormal = SAMPLE_TEXTURE2D(_NormalTexture, sampler_NormalTexture, vertInfo.uv);
+		real3 sampleNormal = SAMPLE_TEXTURE2D(_NormalTexture, sampler_LinearClamp, vertInfo.uv);
 
 		// main light in the scene
 		Light mainLight = GetMainLight(0);
-		float4 mainLightColor = float4(mainLight.color, 1);
-		float shadowDistance = mainLight.distanceAttenuation;
-		float shadowStrength = mainLight.shadowAttenuation;
+		real4 mainLightColor = real4(mainLight.color, 1);
+		real shadowDistance = mainLight.distanceAttenuation;
+		real shadowStrength = mainLight.shadowAttenuation;
 
 		// diffuse lighting
-		float3 surfaceNormal = SafeNormalize(vertInfo.normal); //SafeNormalize(cross(normalize(vertInfo.tangent), sampleNormal));
+		real3 surfaceNormal = SafeNormalize(vertInfo.normal); //SafeNormalize(cross(normalize(vertInfo.tangent), sampleNormal));
 				
-		float surfaceDotLight = dot(_MainLightPosition.xyz, surfaceNormal);
-		float lightIntensity = smoothstep(0, 0.01 * _BlendStrengthAmb, surfaceDotLight) * shadowDistance * shadowStrength;
+		real surfaceDotLight = dot(_MainLightPosition.xyz, surfaceNormal);
+		real lightIntensity = smoothstep(0, 0.01 * _BlendStrengthAmb, surfaceDotLight) * shadowDistance * shadowStrength;
 				
-		float4 worldspaceLight = lightIntensity * mainLightColor;
-		float4 ambientLight = _AmbientColor * mainLightColor * _ShadingStrength;
+		real4 worldspaceLight = lightIntensity * mainLightColor;
+		real4 ambientLight = _AmbientColor * mainLightColor * _ShadingStrength;
 				
 		// specular highlight
-		float3 viewNormal = SafeNormalize(vertInfo.viewDirection);
-		float3 lightToCam = SafeNormalize(_MainLightPosition.xyz + viewNormal);
-		float surfaceDotReflection = float(saturate(dot(surfaceNormal, lightToCam)));
+		real3 viewNormal = SafeNormalize(vertInfo.viewDirection);
+		real3 lightToCam = SafeNormalize(_MainLightPosition.xyz + viewNormal);
+		real surfaceDotReflection = real(saturate(dot(surfaceNormal, lightToCam)));
 				
-		float specularIntensity = smoothstep(0, 0.01 * _BlendStrengthSpec, pow(surfaceDotReflection * lightIntensity, _Smoothness * _Smoothness)) * shadowDistance * shadowStrength;
-		float4 specularLight = _SpecularColor * mainLightColor * specularIntensity;
+		real specularIntensity = smoothstep(0, 0.01 * _BlendStrengthSpec, pow(max(0, surfaceDotReflection * lightIntensity), _Smoothness * _Smoothness)) * shadowDistance * shadowStrength;
+		real4 specularLight = _SpecularColor * mainLightColor * specularIntensity;
 				
 		// edge lighting
-		float surfaceDotView = dot(viewNormal, surfaceNormal);
-		float rimStrength = 1 - _RimStrength;
-		float rimIntensity = (1 - surfaceDotView) * pow(surfaceDotLight, _RimThreshold); // only apply rim lighting to unshaded areas
+		real surfaceDotView = dot(viewNormal, surfaceNormal);
+		real rimStrength = 1 - _RimStrength;
+		real rimIntensity = (1 - surfaceDotView) * pow(max(0, surfaceDotLight), _RimThreshold); // only apply rim lighting to unshaded areas
 		rimIntensity = smoothstep(rimStrength - 0.01, rimStrength + 0.01 * _BlendStrengthRim, rimIntensity);
 				
-		float4 rimLight = _RimColor * mainLightColor * rimIntensity;
+		real4 rimLight = _RimColor * mainLightColor * rimIntensity;
 		
 		// ambient occlusion map color sample
-		float aoIntensity = floor(SAMPLE_TEXTURE2D(_AOTexture, sampler_AOTexture, vertInfo.uv).r * (_AOMapLevels - 1) + _AOBrightPreference) / (_AOMapLevels - 1);
+		real aoIntensity = floor(SAMPLE_TEXTURE2D(_AOTexture, sampler_LinearClamp, vertInfo.uv).r * (_AOMapLevels - 1) + _AOBrightPreference) / (_AOMapLevels - 1);
 		aoIntensity = min(1, smoothstep(_AOIntensityMin, _AOIntensityMax, aoIntensity) + _AOIntensityMin);
 
-		float4 aoColor = surfaceDotLight > 0 ? (mainLightColor * aoIntensity + ambientLight) : float4(1, 1, 1, 1); // don't apply AO map to already shaded areas
+		real4 aoColor = surfaceDotLight > 0 ? (mainLightColor * aoIntensity + ambientLight) : real4(1, 1, 1, 1); // don't apply AO map to already shaded areas
 
 		// sample the diffuse texture
-		float4 diffuseColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, vertInfo.uv) * _Color;
+		real4 diffuseColor = SAMPLE_TEXTURE2D(_MainTex, sampler_LinearClamp, vertInfo.uv) * _Color;
 
 		if (_EnergyConservation > 0)
 		{
 			// monochromatic light energy conservation
-			float specularMax = max(max(_SpecularColor.r, _SpecularColor.g), _SpecularColor.b);
+			real specularMax = max(max(_SpecularColor.r, _SpecularColor.g), _SpecularColor.b);
 			diffuseColor *= 1 - specularMax;			
 		}
 
 		// sample texture and apply shading
-        float4 finalColor = diffuseColor * (worldspaceLight + ambientLight + specularLight + rimLight) * aoColor;
+        real4 finalColor = diffuseColor * (worldspaceLight + ambientLight + specularLight + rimLight) * aoColor;
 
         return finalColor;
     }

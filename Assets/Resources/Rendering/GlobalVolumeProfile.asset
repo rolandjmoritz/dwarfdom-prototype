@@ -75,7 +75,7 @@ MonoBehaviour:
   rounded:
     m_OverrideState: 0
     m_Value: 0
---- !u!114 &-2128814646957673174
+--- !u!114 &-3037199815407150245
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -85,12 +85,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 36f6fc12629be4a438449caaabf14ffd, type: 3}
-  m_Name: PixelizeEffectComponent
+  m_Name: PixelizeComponent
   m_EditorClassIdentifier: 
   active: 1
   m_DownscaleFactor:
     m_OverrideState: 1
+    m_Value: 2
+  m_Spread:
+    m_OverrideState: 1
+    m_Value: 0.025
+  m_BayerLevel:
+    m_OverrideState: 1
     m_Value: 0
+  m_RedColorCount:
+    m_OverrideState: 1
+    m_Value: 32
+  m_GreenColorCount:
+    m_OverrideState: 1
+    m_Value: 32
+  m_BlueColorCount:
+    m_OverrideState: 1
+    m_Value: 32
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,7 +122,7 @@ MonoBehaviour:
   - {fileID: 849379129802519247}
   - {fileID: -7893295128165547882}
   - {fileID: -7011558710299706105}
-  - {fileID: -2128814646957673174}
+  - {fileID: -3037199815407150245}
 --- !u!114 &849379129802519247
 MonoBehaviour:
   m_ObjectHideFlags: 3
