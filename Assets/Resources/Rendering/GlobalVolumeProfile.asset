@@ -96,16 +96,16 @@ MonoBehaviour:
     m_Value: 0.05
   m_BayerLevel:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   m_RedColorCount:
     m_OverrideState: 1
-    m_Value: 16
+    m_Value: 32
   m_GreenColorCount:
     m_OverrideState: 1
-    m_Value: 16
+    m_Value: 32
   m_BlueColorCount:
     m_OverrideState: 1
-    m_Value: 16
+    m_Value: 32
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
