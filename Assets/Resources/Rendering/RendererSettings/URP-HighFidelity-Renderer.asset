@@ -28,9 +28,11 @@ MonoBehaviour:
   m_Name: Pixelization
   m_EditorClassIdentifier: 
   m_Active: 1
+  m_EnableMasking: 0
   m_LayerMask:
     serializedVersion: 2
     m_Bits: 576
+  m_RenderPassEvent: 300
   m_RenderLayerMask: 0
 --- !u!114 &-1878332245247344467
 MonoBehaviour:
@@ -142,7 +144,9 @@ MonoBehaviour:
   m_Name: DwarfGameRendererFeature
   m_EditorClassIdentifier: 
   m_Active: 1
+  m_EnableMasking: 0
   m_LayerMask:
     serializedVersion: 2
     m_Bits: 0
+  m_RenderPassEvent: 0
   m_RenderLayerMask: 0
