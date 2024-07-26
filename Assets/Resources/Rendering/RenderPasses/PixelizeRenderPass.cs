@@ -12,12 +12,14 @@ namespace CureAllGame
         private const string m_ProfilerTag = "Pixelize Pass";
         private ProfilingSampler m_ProfilingSampler = new(m_ProfilerTag);
 
+        private readonly bool m_EnableMasking;
         private readonly FilteringSettings m_FilteringSettings;
         private readonly List<ShaderTagId> m_ShaderTagIds = new();
 
         private RTHandle m_ColorBuffer;
         private RTHandle m_TempBuffer;
         private RTHandle m_FilterBuffer;
+        private RTHandle m_FilterBufferDownscaled;
 
         private PixelizeComponent m_Component;
         private Material m_Material;
@@ -25,11 +27,11 @@ namespace CureAllGame
         private RendererList m_RendererList;
 
 
-        public PixelizeRenderPass(Material renderMaterial, LayerMask layerMask, int renderLayerMask)
+        public PixelizeRenderPass(bool enableMasking, RenderPassEvent renderPass, Material renderMaterial, LayerMask layerMask, int renderLayerMask)
         {
             m_Material = renderMaterial;
-            renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
-
+            m_EnableMasking = enableMasking;
+            renderPassEvent = renderPass;
             m_FilteringSettings = new FilteringSettings(RenderQueueRange.opaque, layerMask, (uint)1 << renderLayerMask);
 
             // Default shader tags.
@@ -41,7 +43,7 @@ namespace CureAllGame
             m_ShaderTagIds.Add(new ShaderTagId("DepthOnly"));
         }
 
-        public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
+        public override void OnCameraSetup(CommandBuffer commandBuffer, ref RenderingData renderingData)
         {
             var cameraTextureDescriptor = renderingData.cameraData.cameraTargetDescriptor;
             cameraTextureDescriptor.depthBufferBits = (int)DepthBits.None;
@@ -53,7 +55,7 @@ namespace CureAllGame
             m_Material.SetInt("_BlueColorCount", m_Component.m_BlueColorCount.value);
             m_Material.SetInt("_BayerLevel", m_Component.m_BayerLevel.value);
 
-            RenderingUtils.ReAllocateIfNeeded(ref m_FilterBuffer, cameraTextureDescriptor,
+            RenderingUtils.ReAllocateIfNeeded(ref m_FilterBuffer, cameraTextureDescriptor, m_Component.m_DownscaleFilteringMode.value,
                 name: "_FilterBuffer");
 
             for (int i = 0; i < m_Component.m_DownscaleFactor.value; ++i)
@@ -61,11 +63,21 @@ namespace CureAllGame
                 cameraTextureDescriptor.width /= 2;
                 cameraTextureDescriptor.height /= 2;
             }
-            RenderingUtils.ReAllocateIfNeeded(ref m_TempBuffer, cameraTextureDescriptor,
+
+            RenderingUtils.ReAllocateIfNeeded(ref m_TempBuffer, cameraTextureDescriptor, m_Component.m_DownscaleFilteringMode.value,
                 name: "_TempBuffer");
 
+            if (m_EnableMasking)
+            {
+                if (m_Component.m_DownscaleFilter.value)
+                {
+                    RenderingUtils.ReAllocateIfNeeded(ref m_FilterBufferDownscaled, cameraTextureDescriptor, m_Component.m_DownscaleFilteringMode.value,
+                        name: "_FilterBufferDownscaled");
+                }
+            }
+
             ConfigureTarget(m_FilterBuffer, renderingData.cameraData.renderer.cameraDepthTargetHandle); // Configure the target to render to. Attach depth handle to filter texture by depth.
-            ConfigureClear(ClearFlag.Color, Color.clear); // Clear the target buffer by giving it a solid color.
+            ConfigureClear(ClearFlag.Color, m_EnableMasking ? Color.clear : Color.white); // Clear the target buffer by giving it a solid color.
         }
 
         private void InitRendererLists(ref RenderingData renderingData, ScriptableRenderContext context)
@@ -91,16 +103,26 @@ namespace CureAllGame
                 context.ExecuteCommandBuffer(commandBuffer);
                 commandBuffer.Clear();
 
-                // Draw filtered items to m_FilterBuffer texture.
-                InitRendererLists(ref renderingData, context);
-                commandBuffer.DrawRendererList(m_RendererList);
+                if (m_EnableMasking)
+                {
+                    // Draw filtered items to m_FilterBuffer texture.
+                    InitRendererLists(ref renderingData, context);
+                    commandBuffer.DrawRendererList(m_RendererList);
+                }
 
-                // Pass filter texture to shaders as a global texture.
-                commandBuffer.SetGlobalTexture(Shader.PropertyToID(m_FilterBuffer.name), m_FilterBuffer);
+                if (m_Component.m_DownscaleFilter.value && m_EnableMasking)
+                {
+                    Blitter.BlitCameraTexture(commandBuffer, m_FilterBuffer, m_FilterBufferDownscaled, m_Material, 1); // Downscale the filter.
+                    commandBuffer.SetGlobalTexture(Shader.PropertyToID(m_FilterBuffer.name), m_FilterBufferDownscaled);
+                }
+                else
+                {
+                    commandBuffer.SetGlobalTexture(Shader.PropertyToID(m_FilterBuffer.name), m_FilterBuffer);
+                }
 
                 if (m_ColorBuffer.rt != null && m_TempBuffer.rt != null)
                 {
-                    Blitter.BlitCameraTexture(commandBuffer, m_ColorBuffer, m_TempBuffer);
+                    Blitter.BlitCameraTexture(commandBuffer, m_ColorBuffer, m_TempBuffer, m_Material, 1);
                     Blitter.BlitCameraTexture(commandBuffer, m_TempBuffer, m_ColorBuffer, m_Material, 0);
                 }
             }
@@ -119,6 +141,7 @@ namespace CureAllGame
         {
             m_TempBuffer?.Release();
             m_FilterBuffer?.Release();
+            m_FilterBufferDownscaled?.Release();
         }
     }
 }

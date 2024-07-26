@@ -29,6 +29,9 @@
 	TEXTURE2D(_MainTex);
 	TEXTURE2D(_NormalTexture);
 	TEXTURE2D(_AOTexture);
+	SAMPLER(sampler_MainTex);
+	SAMPLER(sampler_NormalTexture);
+	SAMPLER(sampler_AOTexture);
 
     CBUFFER_START(UnityPerMaterial)
 		real4 _MainTex_ST;
@@ -84,7 +87,7 @@
 
     real4 FragmentProgram(VertexOutput vertInfo) : SV_Target
     {
-		real3 sampleNormal = SAMPLE_TEXTURE2D(_NormalTexture, sampler_LinearClamp, vertInfo.uv);
+		real3 sampleNormal = SAMPLE_TEXTURE2D(_NormalTexture, sampler_NormalTexture, vertInfo.uv);
 
 		// main light in the scene
 		Light mainLight = GetMainLight(0);
@@ -118,13 +121,13 @@
 		real4 rimLight = _RimColor * mainLightColor * rimIntensity;
 		
 		// ambient occlusion map color sample
-		real aoIntensity = floor(SAMPLE_TEXTURE2D(_AOTexture, sampler_LinearClamp, vertInfo.uv).r * (_AOMapLevels - 1) + _AOBrightPreference) / (_AOMapLevels - 1);
+		real aoIntensity = floor(SAMPLE_TEXTURE2D(_AOTexture, sampler_AOTexture, vertInfo.uv).r * (_AOMapLevels - 1) + _AOBrightPreference) / (_AOMapLevels - 1);
 		aoIntensity = min(1, smoothstep(_AOIntensityMin, _AOIntensityMax, aoIntensity) + _AOIntensityMin);
 
 		real4 aoColor = surfaceDotLight > 0 ? (mainLightColor * aoIntensity + ambientLight) : real4(1, 1, 1, 1); // don't apply AO map to already shaded areas
 
 		// sample the diffuse texture
-		real4 diffuseColor = SAMPLE_TEXTURE2D(_MainTex, sampler_LinearClamp, vertInfo.uv) * _Color;
+		real4 diffuseColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, vertInfo.uv) * _Color;
 
 		if (_EnergyConservation > 0)
 		{

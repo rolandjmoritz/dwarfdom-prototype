@@ -24,5 +24,19 @@ Shader "Cure-All/Pixelize"
 			
             ENDHLSL
 		}
+
+        Pass
+        {
+			Name "Downscaling Pass"
+
+
+            HLSLPROGRAM
+            #pragma vertex VertexProgram
+            #pragma fragment FragmentProgram
+
+			#include "DownscaleShader.hlsl"
+			
+            ENDHLSL
+		}
     }
 }

@@ -88,15 +88,21 @@ MonoBehaviour:
   m_Name: PixelizeComponent
   m_EditorClassIdentifier: 
   active: 1
+  m_DownscaleFilter:
+    m_OverrideState: 1
+    m_Value: 1
   m_DownscaleFactor:
     m_OverrideState: 1
     m_Value: 2
+  m_DownscaleFilteringMode:
+    m_OverrideState: 1
+    m_Value: 0
   m_Spread:
     m_OverrideState: 1
     m_Value: 0.025
   m_BayerLevel:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   m_RedColorCount:
     m_OverrideState: 1
     m_Value: 32

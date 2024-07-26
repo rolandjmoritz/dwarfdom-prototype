@@ -10,7 +10,11 @@ namespace CureAllGame
     internal class DwarfGameRendererFeature : ScriptableRendererFeature
     {
         [Header("Layer Settings")]
+        public bool m_EnableMasking = false;
         public LayerMask m_LayerMask = 0;
+
+        [Header("Rendering Settings")]
+        public RenderPassEvent m_RenderPassEvent;
         public int m_RenderLayerMask;
 
         private Material m_DitheringMat;
@@ -22,7 +26,7 @@ namespace CureAllGame
         {
             m_DitheringMat = CoreUtils.CreateEngineMaterial("Cure-All/Pixelize");
 
-            m_PixelizePass = new PixelizeRenderPass(m_DitheringMat, m_LayerMask, m_RenderLayerMask);
+            m_PixelizePass = new PixelizeRenderPass(m_EnableMasking, m_RenderPassEvent, m_DitheringMat, m_LayerMask, m_RenderLayerMask);
         }
 
         public override void AddRenderPasses(ScriptableRenderer mainRenderer, ref RenderingData renderingData)
@@ -39,7 +43,7 @@ namespace CureAllGame
             m_PixelizePass.ConfigureInput(ScriptableRenderPassInput.Color);
             // Enable if pass requires access to the CameraDepthTexture or the CameraNormalsTexture.
             m_PixelizePass.ConfigureInput(ScriptableRenderPassInput.Depth);
-            // m_PixelizePass.ConfigureInput(ScriptableRenderPassInput.Normal);
+            m_PixelizePass.ConfigureInput(ScriptableRenderPassInput.Normal);
         }
 
         protected override void Dispose(bool disposing)

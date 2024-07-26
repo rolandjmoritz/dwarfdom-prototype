@@ -30,6 +30,8 @@
     TEXTURE2D_X(_FilterBuffer);
     TEXTURE2D_X(_BlitTexture);
     TEXTURECUBE(_BlitCubeTexture);
+    SAMPLER(sampler_FilterBuffer);
+    SAMPLER(sampler_BlitTexture);
 
     uniform float4 _BlitScaleBias;
     uniform float4 _BlitScaleBiasRt;
@@ -109,7 +111,7 @@
 
     real4 FragmentProgram(VertexOutput vertInfo) : SV_Target
     {
-        real4 filterColor = SAMPLE_TEXTURE2D_X(_FilterBuffer, sampler_PointClamp, vertInfo.uv);
+        real4 filterColor = SAMPLE_TEXTURE2D_X(_FilterBuffer, sampler_FilterBuffer, vertInfo.uv);
         if (filterColor.r < 0.1 && filterColor.g < 0.1 && filterColor.b < 0.1)
         {
             clip(-1);
@@ -117,10 +119,10 @@
         }
 
         #if defined(USE_TEXTURE2D_X_AS_ARRAY) && defined(BLIT_SINGLE_SLICE)
-            real4 col = SAMPLE_TEXTURE2D_ARRAY_LOD(_BlitTexture, sampler_PointClamp, vertInfo.uv, _BlitTexArraySlice, _BlitMipLevel);
+            real4 col = SAMPLE_TEXTURE2D_ARRAY_LOD(_BlitTexture, sampler_BlitTexture, vertInfo.uv, _BlitTexArraySlice, _BlitMipLevel);
         #else
             UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(vertInfo);
-            real4 col = SAMPLE_TEXTURE2D_X_LOD(_BlitTexture, sampler_PointClamp, vertInfo.uv, _BlitMipLevel);
+            real4 col = SAMPLE_TEXTURE2D_X_LOD(_BlitTexture, sampler_BlitTexture, vertInfo.uv, _BlitMipLevel);
         #endif
 
         uint x = vertInfo.uv.x * _BlitTexture_TexelSize.z;

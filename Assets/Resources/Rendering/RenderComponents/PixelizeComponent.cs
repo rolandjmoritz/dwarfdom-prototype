@@ -8,11 +8,19 @@ using UnityEngine.Rendering.Universal;
 namespace CureAllGame
 {
     [Serializable]
+    public sealed class FilterModeParameter : VolumeParameter<FilterMode>
+    {
+        public FilterModeParameter(FilterMode value, bool overrideState = false) : base(value, overrideState) { }
+    }
+
+    [Serializable]
     [VolumeComponentMenuForRenderPipeline("Cure-All/Pixelize", typeof(UniversalRenderPipeline))]
     public class PixelizeComponent : VolumeComponent, IPostProcessComponent
     {
         [Header("Pixelization Settings")]
-        public ClampedIntParameter m_DownscaleFactor = new(0, 0, 8, true);
+        public BoolParameter m_DownscaleFilter = new (true);
+        public ClampedIntParameter m_DownscaleFactor = new(0, 0, 4, true);
+        public FilterModeParameter m_DownscaleFilteringMode = new(FilterMode.Point, true);
 
         [Header("Dithering Settings")]
         public ClampedFloatParameter m_Spread = new(0.5f, 0, 1, true);
