@@ -2,37 +2,42 @@ Shader "Cure-All/Cel Shading"
 {
     Properties
     {
-        [MainTexture] _MainTex ("Albedo Map", 2D) = "white" {}
-		[NoScaleOffset] _NormalTexture ("Normal Map", 2D) = "black" {}
-        [NoScaleOffset] _AOTexture ("Ambient Occlusion Map", 2D) = "white" {}
-		_AOMapLevels ("AO Color Levels", Range(2, 255)) = 2
-		_AOBrightPreference ("Quantization Brightness Preference", Range(0, 1)) = 0.5
-		_AOIntensityMin ("AO Minimum Intensity", Range(0, 1)) = 0
-		_AOIntensityMax ("AO Maximum Intensity", Range(0, 1)) = 1
+        [MainTexture] _BaseMap ("Albedo Map", 2D) = "white" {}		
+		[Normal] _NormalMap ("Normal Map", 2D) = "bump" {}
+		_NormalStrength ("Normal Strength", Range(0, 10)) = 1
+		_AOMap ("Ambient Occlusion Map", 2D) = "white" {}
+		[NoScaleOffset] _ShadingRamp ("Shading Ramp", 2D) = "black" {}
 
 		[Space]
-		[Toggle()] _EnergyConservation ("Light Energy Conservation", Float) = 0
-		[MainColor] _Color ("Color", Color) = (1, 1, 1, 1)
-		_AmbientColor ("Ambient Color", Color) = (0.4, 0.4, 0.4, 1)
-		_SpecularColor ("Specular Color", Color) = (0.9, 0.9, 0.9, 1)
-		_RimColor ("Rim Color", Color) = (0.8, 0.8, 0.8, 1)
+		[MainColor] _Color ("Albedo Color", Color) = (1, 1, 1, 1)
+		_AmbientColor ("Ambient Color", Color) = (0, 0, 0, 1)
 		
 		[Space]
-		_Smoothness ("Smoothness", Range(0, 100)) = 50
+		[Toggle(USE_SHADING_RAMP)] _UseShadingRamp ("Use Shading Ramp", Float) = 0
+		_BaseShade ("Shading Tone", Color) = (1, 1, 1, 1)
+		_ShadeTones ("Shade Tones", Range(2, 10)) = 5
+		_ShadeBlend ("Blend Strength", Range(0, 1)) = 1
+		_LowToneWeight ("Low Tone Weight", Range(0, 10)) = 1
+		_MidToneWeight ("Mid Tone Weight", Range(0, 10)) = 1
+		_HighToneWeight ("High Tone Weight", Range(0, 10)) = 1
+
+		[Space]
+		_Smoothness ("Smoothness", Range(0, 50)) = 30
+		_RimThreshold ("Rim Threshold", Range(0, 5)) = 0.5
 		
 		[Space]
-		_ShadingStrength ("Ambient Strength", Range(0, 1)) = 1
-		_RimStrength ("Rim Strength", Range(0, 1)) = 0.275
-		_RimThreshold ("Rim Threshold", Range(0, 1)) = 0.1
-		
-		[Space]
-		_BlendStrengthAmb ("Ambient Blend Strength", Range(0, 10)) = 1
-		_BlendStrengthSpec ("Specular Blend Strength", Range(0.5, 10)) = 1
-		_BlendStrengthRim ("Rim Blend Strength", Range(0, 10)) = 1
+		_DiffuseSmoothing ("Diffuse Smoothing", Range(0, 1)) = 0.02
+		_SpecularSmoothing ("Specular Smoothing", Range(0, 1)) = 0.5
+		_RimStrength ("Rim Strength", Range(0, 1)) = 0.3
+		_RimSmoothing ("Rim Smoothing", Range(0, 1)) = 0.1
+		_DistanceAttenuation ("Light Distance Attenuation", Range(0, 1)) = 1
+		_ShadowAttenuation ("Shadow Attenuation", Range(0, 1)) = 0.02
     }
 
     SubShader
     {
+		LOD 100 // indicates how computationally demanding it is
+
         Tags
 		{
 			"RenderType" = "Opaque"
@@ -42,13 +47,14 @@ Shader "Cure-All/Cel Shading"
         Pass
         {
 			Name "Directional Lighting"
-			
 			Tags
 			{
-				"PassFlags" = "OnlyDirectional"
+				"LightMode" = "UniversalForward"
 			}
 
-			Cull Off
+			Cull Back
+			ZWrite On
+			Blend One OneMinusSrcAlpha
 			
             HLSLPROGRAM
             #pragma vertex VertexProgram
@@ -58,11 +64,19 @@ Shader "Cure-All/Cel Shading"
 			#pragma multi_compile _ _MAIN_LIGHT_SHADOWS
 			#pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
 			#pragma multi_compile _ _SHADOWS_SOFT
+			#pragma multi_compile _ _ADDITIONAL_LIGHTS
+			#pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
+
+			#pragma shader_feature USE_SHADING_RAMP
 
 			#include "CelShader.hlsl"
 			
             ENDHLSL
 		}
-		UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
+
+		UsePass "Universal Render Pipeline/Lit/ShadowCaster"
+		UsePass "Universal Render Pipeline/Lit/GBuffer"
+		UsePass "Universal Render Pipeline/Lit/DepthOnly"
+		UsePass "Universal Render Pipeline/Lit/DepthNormals"
     }
 }

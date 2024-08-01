@@ -27,12 +27,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc6147e6e18a93442803171b46315541, type: 3}
   m_Name: Pixelization
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   m_EnableMasking: 0
   m_LayerMask:
     serializedVersion: 2
     m_Bits: 576
   m_RenderPassEvent: 300
+  m_RenderLayerMask: 0
+--- !u!114 &-5332171335060708853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebcfbd8d1e6b9984cb953e09bd4c4634, type: 3}
+  m_Name: ScreenSpaceOutlineRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  m_EnableMasking: 0
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 512
+  m_RenderPassEvent: 450
   m_RenderLayerMask: 0
 --- !u!114 &-1878332245247344467
 MonoBehaviour:
@@ -88,7 +107,8 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: -1878332245247344467}
   - {fileID: -7979585759102318212}
-  m_RendererFeatureMap: adc0de57c6d2eee57cc9f09d07d14291
+  - {fileID: -5332171335060708853}
+  m_RendererFeatureMap: adc0de57c6d2eee57cc9f09d07d142910ba22ffc6b5200b6
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
